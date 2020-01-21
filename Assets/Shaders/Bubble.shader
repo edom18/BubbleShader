@@ -94,18 +94,17 @@
 
                 float v = tex2D(_LETex, float2(en, et)).x;
 
-                fixed4 cubemap = UNITY_SAMPLE_TEXCUBE(_CubeMap, i.reflDir);
-
                 float uv = u + v;
                 float4 col = tex2D(_MainTex, uv.xx);
-                // float4 col = tex2D(_MainTex, float2(u, v));
                 col.a = min(1.0, i.fresnel * 0.5);
 
                 float NdotL = dot(i.normal, i.lightDir);
                 float3 refDir = -i.lightDir + (2.0 * i.normal * NdotL);
                 float spec = pow(max(0, dot(i.viewDir, refDir)), 3.0) * 0.8;
 
-                return col + spec;
+                fixed4 cubemap = UNITY_SAMPLE_TEXCUBE(_CubeMap, i.reflDir);
+
+                return (col * cubemap) + spec;
             }
             ENDCG
         }
