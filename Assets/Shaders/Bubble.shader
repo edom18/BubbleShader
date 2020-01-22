@@ -75,6 +75,8 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
+                fixed4 cubemap = UNITY_SAMPLE_TEXCUBE(_CubeMap, i.reflDir);
+
                 float d = tex2D(_DTex, i.uv + _Time.xy * 0.1);
                 // float d = tex2D(_DTex, i.uv);
 
@@ -95,16 +97,22 @@
                 float v = tex2D(_LETex, float2(en, et)).x;
 
                 float uv = u + v;
-                float4 col = tex2D(_MainTex, uv.xx);
-                col.a = min(1.0, i.fresnel * 0.5);
+                // float4 col = tex2D(_MainTex, uv.xx);
+                float4 col = tex2D(_MainTex, float2(u, v));
 
                 float NdotL = dot(i.normal, i.lightDir);
                 float3 refDir = -i.lightDir + (2.0 * i.normal * NdotL);
-                float spec = pow(max(0, dot(i.viewDir, refDir)), 3.0) * 0.8;
+                float spec = pow(max(0, dot(i.viewDir, refDir)), 10.0);
 
-                fixed4 cubemap = UNITY_SAMPLE_TEXCUBE(_CubeMap, i.reflDir);
+                float l = 1.0 - dot(i.normal, i.viewDir);
 
-                return (col * cubemap) + spec;
+                cubemap.a = i.fresnel;
+
+                col = (col * cubemap);
+                col += l * 0.5;
+                col += spec;
+
+                return col;
             }
             ENDCG
         }
