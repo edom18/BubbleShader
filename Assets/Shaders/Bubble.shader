@@ -29,6 +29,7 @@
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "./PerlinNoise.cginc"
 
             struct appdata
             {
@@ -77,7 +78,9 @@
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float d = tex2D(_DTex, i.uv + _Time.xy * 0.1);
+                i.uv = pow((i.uv * 2.0) - 1.0, 2.0);
+                //float d = tex2D(_DTex, i.uv + _Time.xy * 0.1);
+                float d = perlinNoise((i.uv + _Time.xy * 0.1) * 3.0);
 
                 float u, v;
 
