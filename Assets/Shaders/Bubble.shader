@@ -75,7 +75,7 @@
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
                 float d = tex2D(_DTex, i.uv + _Time.xy * 0.1);
 
@@ -103,8 +103,8 @@
                     v = tex2D(_LETex, float2(en, et)).x;
                 }
 
-                float uv = u + v;
-                float4 col = tex2D(_MainTex, uv.xx);
+                float2 uv = float2(u, v);
+                float4 col = tex2D(_MainTex, uv);
 
                 float NdotL = dot(i.normal, i.lightDir);
                 float3 localRefDir = -i.lightDir + (2.0 * i.normal * NdotL);
